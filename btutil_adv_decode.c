@@ -3,13 +3,14 @@
 #include "wiced_bt_ble.h"
 #include "btutil_adv_decode.h"
 #include "btutil_company_ids.h"
-#include "wiced_bt_trace.h"
+
+#define TEMP_PRINTF printf
 
 void btutil_adv_printBytesOffset(uint8_t *bytes,uint32_t offset);
 void btutil_adv_printFieldBytes(uint8_t *bytes);
 void btutil_adv_printNameField(uint8_t *bytes);
 void btutbtutil_adv_printUnknownField(char *buff, uint8_t *bytes);
-void btutil_adv_WICED_BT_TRACElagsField(uint8_t *bytes);
+void btutil_adv_printFlagsField(uint8_t *bytes);
 void btutil_adv_printMfgDataField(uint8_t *bytes);
 void btutil_adv_printTxPowerField(uint8_t *bytes);
 void btutil_adv_printSlaveIntervalRangeField(uint8_t *bytes);
@@ -45,7 +46,7 @@ void btutil_adv_printPacketBytes(uint8_t *packet)
 	int len = btutil_adv_len(packet);
 	for(int i=0;i<len;i++)
 	{
-		WICED_BT_TRACE("%02X ",packet[i]);
+		TEMP_PRINTF("%02X ",packet[i]);
 	}
 }
 
@@ -72,7 +73,7 @@ void btutil_adv_printBytesOffset(uint8_t *bytes,uint32_t offset)
 {
     int i;
     for(i=offset;i<bytes[0]-1;i++)
-        WICED_BT_TRACE("%02X ",bytes[2+i]);
+        TEMP_PRINTF("%02X ",bytes[2+i]);
 }
 
 // Print the whole field starting at offset 0
@@ -92,33 +93,33 @@ void btutil_adv_printFieldBytes(uint8_t *bytes)
 void btutil_adv_printNameField(uint8_t *bytes)
 {
     for(int i = 0; i < bytes[0]; i++){
-        WICED_BT_TRACE("%c",bytes[1+i]);
+        TEMP_PRINTF("%c",bytes[1+i]);
     }
 }
 void btutbtutil_adv_printUnknownField(char *buff, uint8_t *bytes)
 {
-    WICED_BT_TRACE("Len:%02X Type:%02X",bytes[0],bytes[1]);
+    TEMP_PRINTF("Len:%02X Type:%02X",bytes[0],bytes[1]);
 }
 
-void btutil_adv_WICED_BT_TRACElagsField(uint8_t *bytes)
+void btutil_adv_printFlagsField(uint8_t *bytes)
 {
 
-    WICED_BT_TRACE("%02X ",bytes[2]);
+    TEMP_PRINTF("%02X ",bytes[2]);
 
     if(bytes[2] & 0x01)
-        WICED_BT_TRACE("LE Ltd Discoverable ");
+        TEMP_PRINTF("LE Ltd Discoverable ");
 
     if(bytes[2] & 0x02)
-        WICED_BT_TRACE("LE General Discoverable ");
+        TEMP_PRINTF("LE General Discoverable ");
 
     if(bytes[2] & 0x04)
-        WICED_BT_TRACE("BR/EDR Not Supported ");
+        TEMP_PRINTF("BR/EDR Not Supported ");
 
     if(bytes[2] & 0x08)
-        WICED_BT_TRACE("BR/EDR Controller ");
+        TEMP_PRINTF("BR/EDR Controller ");
 
     if(bytes[2] & 0x10)
-        WICED_BT_TRACE("BR/EDR Host ");
+        TEMP_PRINTF("BR/EDR Host ");
 }
 
 
@@ -127,10 +128,10 @@ void btutil_adv_printMfgDataField(uint8_t *bytes)
 {
     uint16_t mfg;
     mfg = bytes[2] | bytes[3]<<8;
-    WICED_BT_TRACE("%s ",btutil_getCompanyName(mfg));
+    TEMP_PRINTF("%s ",btutil_getCompanyName(mfg));
     if(mfg == 0x004C && bytes[4] == 0x02)
     {
-        WICED_BT_TRACE("iBeacon ");
+        TEMP_PRINTF("iBeacon ");
         btutil_adv_printBytesOffset(bytes,3);
     }
     else
@@ -144,58 +145,58 @@ void btutil_adv_printTxPowerField(uint8_t *bytes)
 {
     uint16_t power;
     power = bytes[0];
-    WICED_BT_TRACE("%d ",(signed int)power);
+    TEMP_PRINTF("%d ",(signed int)power);
 }
 
 
 
 void btutil_adv_printSlaveIntervalRangeField(uint8_t *bytes)
 {
-    WICED_BT_TRACE("%dms-", (5*(bytes[2] | (bytes[3]<<8)))>>2);
-    WICED_BT_TRACE("%dms ", (5*(bytes[4] | (bytes[5]<<8)))>>2);
+    TEMP_PRINTF("%dms-", (5*(bytes[2] | (bytes[3]<<8)))>>2);
+    TEMP_PRINTF("%dms ", (5*(bytes[4] | (bytes[5]<<8)))>>2);
 }
 
 
 void btutil_adv_PrintAdvIntervalField(uint8_t *bytes)
 {
-    WICED_BT_TRACE("%dms ", (5*(bytes[2] | (bytes[3]<<8)))>>3);
+    TEMP_PRINTF("%dms ", (5*(bytes[2] | (bytes[3]<<8)))>>3);
 }
 
 
 void btutil_adv_printLERoleField(uint8_t *bytes)
 {
 
-    WICED_BT_TRACE("%02X ",bytes[2]);
+    TEMP_PRINTF("%02X ",bytes[2]);
 
     if(bytes[2] == 0x00)
-        WICED_BT_TRACE("Only Peripheral Role supported ");
+        TEMP_PRINTF("Only Peripheral Role supported ");
 
     if(bytes[2] == 0x01)
-        WICED_BT_TRACE("Only Central Role supported ");
+        TEMP_PRINTF("Only Central Role supported ");
 
     if(bytes[2] == 0x02)
-        WICED_BT_TRACE("Peripheral Role preferred ");
+        TEMP_PRINTF("Peripheral Role preferred ");
 
     if(bytes[2] == 0x03)
-        WICED_BT_TRACE("Central Role preferred ");
+        TEMP_PRINTF("Central Role preferred ");
 }
 
 void btutil_adv_decodeSecurityManagerOOBField(uint8_t *bytes)
 {
 
-    WICED_BT_TRACE("%02X ",bytes[2]);
+    TEMP_PRINTF("%02X ",bytes[2]);
 
     if(bytes[2] & 0x00)
-        WICED_BT_TRACE("OOB Flags Field ");
+        TEMP_PRINTF("OOB Flags Field ");
 
     if(bytes[2] & 0x01)
-        WICED_BT_TRACE("LE supported ");
+        TEMP_PRINTF("LE supported ");
 
     if(bytes[2] & 0x02)
-        WICED_BT_TRACE("Simultaneous LE and BR/EDR Capable ");
+        TEMP_PRINTF("Simultaneous LE and BR/EDR Capable ");
 
     if(bytes[2] & 0x03)
-        WICED_BT_TRACE("Address type ");
+        TEMP_PRINTF("Address type ");
 }
 
 
@@ -222,7 +223,7 @@ void btutil_adv_decodePublicAddress(uint8_t *bytes)
 
 void btutil_adv_print128bitUUID(uint8_t *bytes)
 {
-    WICED_BT_TRACE(
+    TEMP_PRINTF(
             "%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X",
             bytes[15],
             bytes[14],
@@ -246,7 +247,7 @@ void btutil_adv_print128bitUUID(uint8_t *bytes)
 
 void btutil_adv_print32bitUUID(uint8_t *bytes)
 {
-    WICED_BT_TRACE(
+    TEMP_PRINTF(
             "%02X%02X%02X%02X",
             bytes[3],
             bytes[2],
@@ -257,7 +258,7 @@ void btutil_adv_print32bitUUID(uint8_t *bytes)
 
 void btutil_adv_print16bitUUID(uint8_t *bytes)
 {
-    WICED_BT_TRACE(
+    TEMP_PRINTF(
             "%02X%02X",
             bytes[1],
             bytes[0]
@@ -273,7 +274,7 @@ struct btutil_adv_decode_t {
 
 // https://www.bluetooth.com/specifications/assigned-numbers/generic-access-profile
 struct btutil_adv_decode_t btutil_adv_decodeArray[] = {
-        {0x01, "Flags",btutil_adv_WICED_BT_TRACElagsField},
+        {0x01, "Flags",btutil_adv_printFlagsField},
         {0x02, "16-bit Service UUID",btutil_adv_print16bitServiceUUID},
         {0x03, "16-bit Service UUID",btutil_adv_print16bitServiceUUID},
         {0x04, "32-bit Service UUID",btutil_adv_decode32bitServiceUUID},
@@ -334,13 +335,13 @@ void btutil_adv_printFieldDecode(uint8_t *bytes)
     {
         if(bytes[1] == btutil_adv_decodeArray[i].code)
         {
-            WICED_BT_TRACE("%s ",btutil_adv_decodeArray[i].name);
+            TEMP_PRINTF("%s ",btutil_adv_decodeArray[i].name);
             (*btutil_adv_decodeArray[i].fcn)(bytes);
-            WICED_BT_TRACE("\n");
+            TEMP_PRINTF("\n");
             return;
         }
     }
-    WICED_BT_TRACE("Unknown\n");
+    TEMP_PRINTF("Unknown\n");
 }
 
 // Eddystone prefix: 02 01 06 03 03 AA FE
