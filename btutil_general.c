@@ -17,5 +17,7 @@
 **************************************************************************************************/
 void btutil_printBDaddress(wiced_bt_device_address_t bdadr)
 {
-    printf("%02X:%02X:%02X:%02X:%02X:%02X",bdadr[0],bdadr[1],bdadr[2],bdadr[3],bdadr[4],bdadr[5]);
+    printf("0x%02X,0x%02X,0x%02X,0x%02X,0x%02X,0x%02X,",bdadr[0],bdadr[1],bdadr[2],bdadr[3],bdadr[4],bdadr[5]);
+//printf("%02X:%02X:%02X:%02X:%02X:%02X",bdadr[0],bdadr[1],bdadr[2],bdadr[3],bdadr[4],bdadr[5]);
+
 }
