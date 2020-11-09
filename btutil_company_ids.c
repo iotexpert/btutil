@@ -1646,6 +1646,6 @@ char *btutil_getCompanyName(uint16_t id)
     for(int i=0;i<numCompanies;i++)
         if(btutil_company_ids[i].companyCode == id)
             return btutil_company_ids[i].name;
-    return 0;
+    return "unknown";
 }
 
