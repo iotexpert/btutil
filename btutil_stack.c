@@ -47,9 +47,12 @@ const char *btutil_getBTEventName(wiced_bt_management_evt_t event)
 #ifdef CYW20819A1
     CASE_RETURN_STR(BTM_BLE_PHY_UPDATE_EVT)
 #endif
+    CASE_RETURN_STR(BTM_BLE_PHY_UPDATE_EVT)                         /**< BLE Physical link update. Event data: wiced_bt_ble_phy_update_t */
+    CASE_RETURN_STR(BTM_LPM_STATE_LOW_POWER)                        /**< BT device wake has been deasserted. Used for Host Stack Use Case. */
+    CASE_RETURN_STR(BTM_MULTI_ADVERT_RESP_EVENT)
     }
 
-    return NULL;
+    return "Unknown Management Event";
 }
 
 
